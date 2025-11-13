@@ -1,17 +1,16 @@
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
-import shutil
 
-df = pd.read_csv("data/raw/train.csv",low_memory=False)
+def clean_data(dataset):
+    df = pd.read_csv(f"../data/raw/{dataset}.csv",low_memory=False)
 
-df = df[df["Open"] == 1]
-df = df.reset_index(drop=True)
+    df = df[df["Open"] == 1]
+    df = df.reset_index(drop=True)
 
-df["Date"] = pd.to_datetime(df["Date"]).dt.date
+    df["Date"] = pd.to_datetime(df["Date"]).dt.date
 
-table = pa.Table.from_pandas(df)
-pq.write_table(table, "train_clean.parquet")
-shutil.move("train_clean.parquet","data/processed/")
+    table = pa.Table.from_pandas(df)
+    pq.write_table(table, f"../data/processed/{dataset}_clean.parquet")
 
-print("Limpieza básica de los datos realizada correctamente")
+    print("✅ Limpieza básica de los datos realizada correctamente")
